@@ -442,6 +442,9 @@ struct module {
 	unsigned int num_tracepoints;
 	tracepoint_ptr_t *tracepoints_ptrs;
 #endif
+#ifdef CONFIG_BPF_EVENTS
+	unsigned int num_bpf_raw_events;
+	struct bpf_raw_event_map *bpf_raw_events;
 #ifdef CONFIG_TREE_SRCU
 	unsigned int num_srcu_structs;
 	struct srcu_struct **srcu_struct_ptrs;
