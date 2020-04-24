@@ -2019,8 +2019,8 @@ static char sysctl_bootid[16];
  * returned as an ASCII string in the standard UUID format; if via the
  * sysctl system call, as 16 bytes of binary data.
  */
-static int proc_do_uuid(struct ctl_table *table, int write,
-			void __user *buffer, size_t *lenp, loff_t *ppos)
+static int proc_do_uuid(struct ctl_table *table, int write, void *buffer,
+			size_t *lenp, loff_t *ppos)
 {
 	struct ctl_table fake_table;
 	unsigned char buf[64], tmp_uuid[16], *uuid;
@@ -2050,7 +2050,7 @@ static int proc_do_uuid(struct ctl_table *table, int write,
  * Return entropy available scaled to integral bits
  */
 static int proc_do_entropy(struct ctl_table *table, int write,
-			   void __user *buffer, size_t *lenp, loff_t *ppos)
+			   void *buffer, size_t *lenp, loff_t *ppos)
 {
 	struct ctl_table fake_table;
 	int entropy_count;
