@@ -458,6 +458,16 @@ static int notrace ramoops_pstore_write(struct pstore_record *record)
 		size = prz->buffer_size - hlen;
 	persistent_ram_write(prz, record->buf, size);
 
+	/* Keep long-press logs in the recovery kernel's shared pmsg region. */
+	if (record->reason == KMSG_DUMP_LONG_PRESS && cxt->mprz &&
+	    !record->compressed) {
+		static const char header[] =
+			"\n--- ramoops long-press dmesg ---\n";
+
+		persistent_ram_write(cxt->mprz, header, sizeof(header) - 1);
+		persistent_ram_write(cxt->mprz, record->buf, record->size);
+	}
+
 	cxt->dump_write_cnt = (cxt->dump_write_cnt + 1) % cxt->max_dump_cnt;
 
 	return 0;
@@ -989,8 +999,8 @@ static int __init ramoops_memreserve(char *p)
 	size = memparse(p, &p) & PAGE_MASK;
 	ramoops_data.mem_size = size;
 	ramoops_data.mem_address = 0xB0000000;
-	ramoops_data.console_size = size / 2;
-	ramoops_data.pmsg_size = size / 4;
+	ramoops_data.console_size = size / 4;
+	ramoops_data.pmsg_size = size / 2;
 	ramoops_data.record_size = size / 4;
 	ramoops_data.dump_oops = 1;
 
