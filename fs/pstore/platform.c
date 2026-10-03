@@ -109,6 +109,8 @@ static const char *get_reason_str(enum kmsg_dump_reason reason)
 	switch (reason) {
 	case KMSG_DUMP_PANIC:
 		return "Panic";
+	case KMSG_DUMP_LONG_PRESS:
+		return "Long Press";
 	case KMSG_DUMP_OOPS:
 		return "Oops";
 	case KMSG_DUMP_EMERG:

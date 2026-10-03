@@ -418,7 +418,8 @@ static int notrace ramoops_pstore_write(struct pstore_record *record)
 	 * to only store crash logs, rather than storing general kernel logs.
 	 */
 	if (record->reason != KMSG_DUMP_OOPS &&
-	    record->reason != KMSG_DUMP_PANIC)
+	    record->reason != KMSG_DUMP_PANIC &&
+	    record->reason != KMSG_DUMP_LONG_PRESS)
 		return -EINVAL;
 
 	/* Skip Oopes when configured to do so. */
@@ -989,7 +990,8 @@ static int __init ramoops_memreserve(char *p)
 	ramoops_data.mem_size = size;
 	ramoops_data.mem_address = 0xB0000000;
 	ramoops_data.console_size = size / 2;
-	ramoops_data.pmsg_size = size / 2;
+	ramoops_data.pmsg_size = size / 4;
+	ramoops_data.record_size = size / 4;
 	ramoops_data.dump_oops = 1;
 
 	pr_info("msm_reserve_ramoops_memory addr=%llx,size=%lx\n",
