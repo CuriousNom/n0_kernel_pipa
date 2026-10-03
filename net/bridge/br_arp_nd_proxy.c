@@ -23,6 +23,7 @@
 #include <net/addrconf.h>
 #if IS_ENABLED(CONFIG_IPV6)
 #include <net/ip6_checksum.h>
+#include <net/ipv6_stubs.h>
 #endif
 
 #include "br_private.h"

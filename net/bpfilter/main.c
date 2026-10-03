@@ -6,7 +6,7 @@
 #include <sys/socket.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include "include/uapi/linux/bpf.h"
+#include "../../include/uapi/linux/bpf.h"
 #include <asm/unistd.h>
 #include "msgfmt.h"
 
@@ -55,8 +55,9 @@ static void loop(void)
 
 int main(void)
 {
-	debug_fd = open("/dev/console", 00000002);
-	dprintf(debug_fd, "Started bpfilter\n");
+	debug_f = fopen("/dev/kmsg", "w");
+	setvbuf(debug_f, 0, _IOLBF, 0);
+	fprintf(debug_f, "<5>Started bpfilter\n");
 	loop();
 	close(debug_fd);
 	return 0;

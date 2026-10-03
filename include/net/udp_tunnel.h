@@ -7,6 +7,7 @@
 
 #if IS_ENABLED(CONFIG_IPV6)
 #include <net/ipv6.h>
+#include <net/ipv6_stubs.h>
 #include <net/addrconf.h>
 #endif
 

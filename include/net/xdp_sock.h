@@ -46,6 +46,12 @@ struct xdp_umem {
 	struct list_head xsk_list;
 };
 
+struct xsk_map {
+	struct bpf_map map;
+	spinlock_t lock;
+	struct xdp_sock *xsk_map[];
+};
+
 struct xdp_sock {
 	/* struct sock must be the first member of struct xdp_sock */
 	struct sock sk;
@@ -64,14 +70,30 @@ struct xdp_sock {
 	 */
 	spinlock_t tx_completion_lock;
 	u64 rx_dropped;
+	struct list_head map_list;
+	spinlock_t map_list_lock;
 };
 
 struct xdp_buff;
 #ifdef CONFIG_XDP_SOCKETS
 int xsk_generic_rcv(struct xdp_sock *xs, struct xdp_buff *xdp);
-int xsk_rcv(struct xdp_sock *xs, struct xdp_buff *xdp);
-void xsk_flush(struct xdp_sock *xs);
 bool xsk_is_setup_for_bpf_map(struct xdp_sock *xs);
+int __xsk_map_redirect(struct xdp_sock *xs, struct xdp_buff *xdp);
+void __xsk_map_flush(void);
+
+static inline struct xdp_sock *__xsk_map_lookup_elem(struct bpf_map *map,
+							     u32 key)
+{
+	struct xsk_map *m = container_of(map, struct xsk_map, map);
+	struct xdp_sock *xs;
+
+	if (key >= map->max_entries)
+		return NULL;
+
+	xs = READ_ONCE(m->xsk_map[key]);
+	return xs;
+}
+
 /* Used from netdev driver */
 u64 *xsk_umem_peek_addr(struct xdp_umem *umem, u64 *addr);
 void xsk_umem_discard_addr(struct xdp_umem *umem);
@@ -84,18 +106,24 @@ static inline int xsk_generic_rcv(struct xdp_sock *xs, struct xdp_buff *xdp)
 	return -ENOTSUPP;
 }
 
-static inline int xsk_rcv(struct xdp_sock *xs, struct xdp_buff *xdp)
-{
-	return -ENOTSUPP;
-}
-
-static inline void xsk_flush(struct xdp_sock *xs)
-{
-}
-
 static inline bool xsk_is_setup_for_bpf_map(struct xdp_sock *xs)
 {
 	return false;
+}
+
+static inline int __xsk_map_redirect(struct xdp_sock *xs, struct xdp_buff *xdp)
+{
+	return -EOPNOTSUPP;
+}
+
+static inline void __xsk_map_flush(void)
+{
+}
+
+static inline struct xdp_sock *__xsk_map_lookup_elem(struct bpf_map *map,
+							     u32 key)
+{
+	return NULL;
 }
 #endif /* CONFIG_XDP_SOCKETS */
 

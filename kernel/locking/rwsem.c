@@ -1622,6 +1622,16 @@ int down_read_trylock(struct rw_semaphore *sem)
 }
 EXPORT_SYMBOL(down_read_trylock);
 
+int down_read_trylock_non_owner(struct rw_semaphore *sem)
+{
+	int ret = __down_read_trylock(sem);
+
+	if (ret)
+		__rwsem_set_reader_owned(sem, NULL);
+	return ret;
+}
+EXPORT_SYMBOL(down_read_trylock_non_owner);
+
 /*
  * lock for writing
  */

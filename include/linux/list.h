@@ -120,6 +120,12 @@ static inline void __list_del_entry(struct list_head *entry)
 	__list_del(entry->prev, entry->next);
 }
 
+static inline void __list_del_clearprev(struct list_head *entry)
+{
+	__list_del(entry->prev, entry->next);
+	entry->prev = NULL;
+}
+
 static inline void list_del(struct list_head *entry)
 {
 	__list_del_entry(entry);
@@ -684,6 +690,11 @@ static inline void INIT_HLIST_NODE(struct hlist_node *h)
 static inline int hlist_unhashed(const struct hlist_node *h)
 {
 	return !h->pprev;
+}
+
+static inline int hlist_unhashed_lockless(const struct hlist_node *h)
+{
+	return !READ_ONCE(h->pprev);
 }
 
 static inline int hlist_empty(const struct hlist_head *h)

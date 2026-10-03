@@ -312,6 +312,12 @@ copy_struct_from_user(void *dst, size_t ksize, const void __user *src,
 extern long probe_kernel_read(void *dst, const void *src, size_t size);
 extern long __probe_kernel_read(void *dst, const void *src, size_t size);
 
+static inline long copy_from_kernel_nofault(void *dst, const void *src,
+					    size_t size)
+{
+	return probe_kernel_read(dst, src, size);
+}
+
 /*
  * probe_user_read(): safely attempt to read from a location in user space
  * @dst: pointer to the buffer that shall take the data

@@ -70,10 +70,13 @@ struct proc_dir_entry *proc_create_net_data_write(const char *name, umode_t mode
 						  proc_write_t write,
 						  unsigned int state_size, void *data);
 struct proc_dir_entry *proc_create_net_single_write(const char *name, umode_t mode,
-						    struct proc_dir_entry *parent,
-						    int (*show)(struct seq_file *, void *),
-						    proc_write_t write,
-						    void *data);
+							    struct proc_dir_entry *parent,
+							    int (*show)(struct seq_file *, void *),
+							    proc_write_t write,
+							    void *data);
+struct bpf_iter_aux_info;
+extern int bpf_iter_init_seq_net(void *priv_data, struct bpf_iter_aux_info *aux);
+extern void bpf_iter_fini_seq_net(void *priv_data);
 extern struct pid *tgid_pidfd_to_pid(const struct file *file);
 
 #else /* CONFIG_PROC_FS */

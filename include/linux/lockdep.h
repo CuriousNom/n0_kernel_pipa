@@ -71,6 +71,7 @@ struct lockdep_subclass_key {
 } __attribute__ ((__packed__));
 
 struct lock_class_key {
+	struct hlist_node		hash_entry;
 	struct lockdep_subclass_key	subkeys[MAX_LOCKDEP_SUBCLASSES];
 };
 
@@ -297,6 +298,8 @@ extern asmlinkage void lockdep_sys_exit(void);
 
 extern void lockdep_off(void);
 extern void lockdep_on(void);
+extern void lockdep_register_key(struct lock_class_key *key);
+extern void lockdep_unregister_key(struct lock_class_key *key);
 
 /*
  * These methods are used by specific locking variants (spinlocks,
@@ -495,6 +498,9 @@ static inline void lockdep_on(void)
  * The class key takes no space if lockdep is disabled:
  */
 struct lock_class_key { };
+
+static inline void lockdep_register_key(struct lock_class_key *key) { }
+static inline void lockdep_unregister_key(struct lock_class_key *key) { }
 
 /*
  * The lockdep_map takes no space if lockdep is disabled:

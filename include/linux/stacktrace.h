@@ -19,6 +19,9 @@ extern void save_stack_trace_regs(struct pt_regs *regs,
 				  struct stack_trace *trace);
 extern void save_stack_trace_tsk(struct task_struct *tsk,
 				struct stack_trace *trace);
+unsigned int stack_trace_save_tsk(struct task_struct *task,
+				 unsigned long *store, unsigned int size,
+				 unsigned int skipnr);
 extern int save_stack_trace_tsk_reliable(struct task_struct *tsk,
 					 struct stack_trace *trace);
 
@@ -35,6 +38,7 @@ extern void save_stack_trace_user(struct stack_trace *trace);
 #else /* !CONFIG_STACKTRACE */
 # define save_stack_trace(trace)			do { } while (0)
 # define save_stack_trace_tsk(tsk, trace)		do { } while (0)
+# define stack_trace_save_tsk(task, store, size, skipnr)	(0U)
 # define save_stack_trace_user(trace)			do { } while (0)
 # define print_stack_trace(trace, spaces)		do { } while (0)
 # define snprint_stack_trace(buf, size, trace, spaces)	do { } while (0)

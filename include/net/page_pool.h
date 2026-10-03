@@ -132,6 +132,16 @@ static inline void page_pool_recycle_direct(struct page_pool *pool,
 	__page_pool_put_page(pool, page, true);
 }
 
+/* Disconnect a page from the pool without dropping its reference. */
+void page_pool_unmap_page(struct page_pool *pool, struct page *page);
+static inline void page_pool_release_page(struct page_pool *pool,
+					  struct page *page)
+{
+#ifdef CONFIG_PAGE_POOL
+	page_pool_unmap_page(pool, page);
+#endif
+}
+
 static inline bool is_page_pool_compiled_in(void)
 {
 #ifdef CONFIG_PAGE_POOL

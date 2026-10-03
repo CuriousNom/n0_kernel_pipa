@@ -136,6 +136,7 @@ extern int __must_check down_read_killable(struct rw_semaphore *sem);
  * trylock for reading -- returns 1 if successful, 0 if contention
  */
 extern int down_read_trylock(struct rw_semaphore *sem);
+extern int down_read_trylock_non_owner(struct rw_semaphore *sem);
 
 /*
  * lock for writing

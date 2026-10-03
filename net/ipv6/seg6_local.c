@@ -825,8 +825,9 @@ static int parse_nla_bpf(struct nlattr **attrs, struct seg6_local_lwt *slwt)
 	int ret;
 	u32 fd;
 
-	ret = nla_parse_nested(tb, SEG6_LOCAL_BPF_PROG_MAX,
-			       attrs[SEG6_LOCAL_BPF], bpf_prog_policy, NULL);
+	ret = nla_parse_nested_deprecated(tb, SEG6_LOCAL_BPF_PROG_MAX,
+					  attrs[SEG6_LOCAL_BPF],
+					  bpf_prog_policy, NULL);
 	if (ret < 0)
 		return ret;
 

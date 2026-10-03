@@ -150,7 +150,7 @@ void put_callchain_buffers(void)
 	}
 }
 
-static struct perf_callchain_entry *get_callchain_entry(int *rctx)
+struct perf_callchain_entry *get_callchain_entry(int *rctx)
 {
 	int cpu;
 	struct callchain_cpus_entries *entries;
@@ -160,20 +160,24 @@ static struct perf_callchain_entry *get_callchain_entry(int *rctx)
 		return NULL;
 
 	entries = rcu_dereference(callchain_cpus_entries);
-	if (!entries)
+	if (!entries) {
+		put_recursion_context(this_cpu_ptr(callchain_recursion), *rctx);
 		return NULL;
+	}
 
 	cpu = smp_processor_id();
 
 	return (((void *)entries->cpu_entries[cpu]) +
 		(*rctx * perf_callchain_entry__sizeof()));
 }
+EXPORT_SYMBOL_GPL(get_callchain_entry);
 
-static void
+void
 put_callchain_entry(int rctx)
 {
 	put_recursion_context(this_cpu_ptr(callchain_recursion), rctx);
 }
+EXPORT_SYMBOL_GPL(put_callchain_entry);
 
 struct perf_callchain_entry *
 get_perf_callchain(struct pt_regs *regs, u32 init_nr, bool kernel, bool user,

@@ -12,6 +12,11 @@
 
 static struct vfsmount *nsfs_mnt;
 
+bool ns_match(const struct ns_common *ns, dev_t dev, ino_t ino)
+{
+	return ns->inum == ino && nsfs_mnt->mnt_sb->s_dev == dev;
+}
+
 static long ns_ioctl(struct file *filp, unsigned int ioctl,
 			unsigned long arg);
 static const struct file_operations ns_file_operations = {

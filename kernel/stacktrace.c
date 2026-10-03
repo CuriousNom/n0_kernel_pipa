@@ -53,6 +53,21 @@ int snprint_stack_trace(char *buf, size_t size,
 }
 EXPORT_SYMBOL_GPL(snprint_stack_trace);
 
+unsigned int stack_trace_save_tsk(struct task_struct *task,
+				 unsigned long *store, unsigned int size,
+				 unsigned int skipnr)
+{
+	struct stack_trace trace = {
+		.entries = store,
+		.max_entries = size,
+		.skip = skipnr,
+	};
+
+	save_stack_trace_tsk(task, &trace);
+	return trace.nr_entries;
+}
+EXPORT_SYMBOL_GPL(stack_trace_save_tsk);
+
 /*
  * Architectures that do not implement save_stack_trace_*()
  * get these weak aliases and once-per-bootup warnings

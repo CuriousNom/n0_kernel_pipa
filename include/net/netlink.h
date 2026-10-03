@@ -790,6 +790,14 @@ static inline int nla_parse_nested(struct nlattr *tb[], int maxtype,
 			 extack);
 }
 
+static inline int nla_parse_nested_deprecated(struct nlattr *tb[], int maxtype,
+					      const struct nlattr *nla,
+					      const struct nla_policy *policy,
+					      struct netlink_ext_ack *extack)
+{
+	return nla_parse_nested(tb, maxtype, nla, policy, extack);
+}
+
 /**
  * nla_put_u8 - Add a u8 netlink attribute to a socket buffer
  * @skb: socket buffer to add attribute to
@@ -1307,6 +1315,8 @@ static inline struct nlattr *nla_nest_start(struct sk_buff *skb, int attrtype)
 
 	return start;
 }
+
+#define nla_nest_start_noflag(skb, attrtype) nla_nest_start(skb, attrtype)
 
 /**
  * nla_nest_end - Finalize nesting of attributes

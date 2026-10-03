@@ -69,6 +69,14 @@ struct audit_krule;
 struct user_namespace;
 struct timezone;
 
+enum lockdown_reason {
+	LOCKDOWN_NONE,
+	LOCKDOWN_BPF_WRITE_USER,
+	LOCKDOWN_INTEGRITY_MAX,
+	LOCKDOWN_BPF_READ,
+	LOCKDOWN_CONFIDENTIALITY_MAX,
+};
+
 enum lsm_event {
 	LSM_POLICY_CHANGE,
 };
@@ -1876,5 +1884,14 @@ static inline int security_perf_event_write(struct perf_event *event)
 }
 #endif /* CONFIG_SECURITY */
 #endif /* CONFIG_PERF_EVENTS */
+
+#ifdef CONFIG_SECURITY
+int security_locked_down(enum lockdown_reason what);
+#else
+static inline int security_locked_down(enum lockdown_reason what)
+{
+	return 0;
+}
+#endif /* CONFIG_SECURITY */
 
 #endif /* ! __LINUX_SECURITY_H */

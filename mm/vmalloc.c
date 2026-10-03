@@ -33,6 +33,7 @@
 #include <linux/bitops.h>
 #include <linux/rbtree_augmented.h>
 #include <linux/overflow.h>
+#include <linux/set_memory.h>
 
 #include <linux/uaccess.h>
 #include <asm/tlbflush.h>
@@ -2204,7 +2205,13 @@ static void __vunmap(const void *addr, int deallocate_pages)
 	debug_check_no_locks_freed(area->addr, get_vm_area_size(area));
 	debug_check_no_obj_freed(area->addr, get_vm_area_size(area));
 
+	if (area->flags & VM_FLUSH_RESET_PERMS) {
+		set_memory_nx((unsigned long)area->addr, area->nr_pages);
+		set_memory_rw((unsigned long)area->addr, area->nr_pages);
+	}
 	remove_vm_area(addr);
+	if (area->flags & VM_FLUSH_RESET_PERMS)
+		vm_unmap_aliases();
 	if (deallocate_pages) {
 		int i;
 

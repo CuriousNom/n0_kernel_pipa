@@ -101,6 +101,8 @@ struct tcp_options_received {
 		smc_ok : 1,	/* SMC seen on SYN packet		*/
 		snd_wscale : 4,	/* Window scaling received from sender	*/
 		rcv_wscale : 4;	/* Window scaling to send to receiver	*/
+	u8	saw_unknown:1,	/* Received unknown option		*/
+		unused:7;
 	u8	num_sacks;	/* Number of SACK blocks		*/
 	u16	user_mss;	/* mss requested by user in ioctl	*/
 	u16	mss_clamp;	/* Maximal mss, negotiated at connection setup */
@@ -109,6 +111,7 @@ struct tcp_options_received {
 static inline void tcp_clear_options(struct tcp_options_received *rx_opt)
 {
 	rx_opt->tstamp_ok = rx_opt->sack_ok = 0;
+	rx_opt->saw_unknown = 0;
 	rx_opt->wscale_ok = rx_opt->snd_wscale = 0;
 #if IS_ENABLED(CONFIG_SMC)
 	rx_opt->smc_ok = 0;
@@ -400,7 +403,7 @@ struct tcp_sock {
 	 * socket. Used to retransmit SYNACKs etc.
 	 */
 	struct request_sock *fastopen_rsk;
-	u32	*saved_syn;
+	struct saved_syn *saved_syn;
 };
 
 enum tsq_enum {
@@ -475,6 +478,12 @@ static inline void tcp_saved_syn_free(struct tcp_sock *tp)
 {
 	kfree(tp->saved_syn);
 	tp->saved_syn = NULL;
+}
+
+static inline u32 tcp_saved_syn_len(const struct saved_syn *saved_syn)
+{
+	return saved_syn->mac_hdrlen + saved_syn->network_hdrlen +
+		saved_syn->tcp_hdrlen;
 }
 
 struct sk_buff *tcp_get_timestamping_opt_stats(const struct sock *sk);

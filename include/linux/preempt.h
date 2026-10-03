@@ -317,12 +317,23 @@ void preempt_notifier_register(struct preempt_notifier *notifier);
 void preempt_notifier_unregister(struct preempt_notifier *notifier);
 
 static inline void preempt_notifier_init(struct preempt_notifier *notifier,
-				     struct preempt_ops *ops)
+					     struct preempt_ops *ops)
 {
 	INIT_HLIST_NODE(&notifier->link);
 	notifier->ops = ops;
 }
 
 #endif
+
+/* This non-RT kernel maps migration pinning to preemption control. */
+static __always_inline void migrate_disable(void)
+{
+	preempt_disable();
+}
+
+static __always_inline void migrate_enable(void)
+{
+	preempt_enable();
+}
 
 #endif /* __LINUX_PREEMPT_H */
