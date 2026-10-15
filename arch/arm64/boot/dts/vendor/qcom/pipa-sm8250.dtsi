@@ -3021,7 +3021,7 @@ And public attribution of xiaomi platforms(like pipa and so and)
 };
 
 &usb1 {
-	status = "disable";
+	status = "disabled";
 	qcom,ignore-wakeup-src-in-hostmode;
 
 	dwc3@a800000 {
