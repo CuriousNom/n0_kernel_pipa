@@ -4,7 +4,7 @@ TECHPACK?=y
 techpack-dirs := $(shell find $(srctree)/techpack -maxdepth 1 -mindepth 1 -type d -not -name ".*" -not -name "camera*")
 ifeq ($(CONFIG_CAMERA_CAS),y)
 techpack-dirs += $(srctree)/techpack/camera-cas
-else ifeq ($(CONFIG_CAMERA_XIAOMI_TABLET),y)
+else ifeq ($(CONFIG_TECHPACK_CAMERA_XIAOMI_TABLET),y)
 techpack-dirs += $(srctree)/techpack/camera-xiaomi-tablet
 else
 techpack-dirs += $(srctree)/techpack/camera
@@ -14,7 +14,7 @@ obj-${TECHPACK} += stub/ $(addsuffix /,$(subst $(srctree)/techpack/,,$(techpack-
 techpack-header-dirs := $(shell find $(srctree)/techpack -maxdepth 1 -mindepth 1 -type d -not -name ".*" -not -name "camera*")
 ifeq ($(CONFIG_CAMERA_CAS),y)
 techpack-header-dirs += $(srctree)/techpack/camera-cas
-else ifeq ($(CONFIG_CAMERA_XIAOMI_TABLET),y)
+else ifeq ($(CONFIG_TECHPACK_CAMERA_XIAOMI_TABLET),y)
 techpack-header-dirs += $(srctree)/techpack/camera-xiaomi-tablet
 else
 techpack-header-dirs += $(srctree)/techpack/camera

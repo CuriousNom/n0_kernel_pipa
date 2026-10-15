@@ -55,17 +55,15 @@
  * @fmt       :  Formatted string which needs to be print in the log
  *
  */
-void cam_debug_log(unsigned int module_id, const char *func, const int line,
-	const char *fmt, ...);
+static inline void cam_debug_log(unsigned int module_id, const char *func, const int line,
+	const char *fmt, ...)
+{
+}
 
-/*
- * cam_get_module_name()
- *
- * @brief     :  Get the module name from module ID
- *
- * @module_id :  Module ID which is using this function
- */
-const char *cam_get_module_name(unsigned int module_id);
+static inline const char *cam_get_module_name(unsigned int module_id)
+{
+	return "CAM";
+}
 
 /*
  * CAM_ERR
