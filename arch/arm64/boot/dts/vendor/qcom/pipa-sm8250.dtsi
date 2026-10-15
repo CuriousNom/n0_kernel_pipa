@@ -4170,3 +4170,11 @@ And public attribution of xiaomi platforms(like pipa and so and)
 &sde_dp {
 	qcom,max-lclk-frequency-khz = <540000>;
 };
+
+&mdm0 {
+	status = "disabled";
+};
+
+&mhi_0 {
+	status = "disabled";
+};
