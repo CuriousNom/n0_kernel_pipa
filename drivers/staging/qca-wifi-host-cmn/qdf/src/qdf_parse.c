@@ -17,6 +17,7 @@
  */
 
 #include "qdf_file.h"
+#include "qdf_mem.h"
 #include "qdf_module.h"
 #include "qdf_parse.h"
 #include "qdf_status.h"
@@ -27,6 +28,7 @@
 #include "wlan_hdd_misc.h"
 
 static char *wlan_cfg_buf;
+static size_t wlan_cfg_size;
 
 QDF_STATUS qdf_ini_parse(const char *ini_path, void *context,
 			 qdf_ini_item_cb item_cb, qdf_ini_section_cb section_cb)
@@ -38,7 +40,12 @@ QDF_STATUS qdf_ini_parse(const char *ini_path, void *context,
 
 	if (strcmp(ini_path, WLAN_INI_FILE) == 0) {
 		pr_info("qcacld: loading overridden WLAN_INI_FILE\n");
-		fbuf = wlan_cfg_buf;
+		if (!wlan_cfg_buf || !wlan_cfg_size)
+			return QDF_STATUS_E_INVAL;
+		fbuf = qdf_mem_malloc(wlan_cfg_size);
+		if (!fbuf)
+			return QDF_STATUS_E_NOMEM;
+		qdf_mem_copy(fbuf, wlan_cfg_buf, wlan_cfg_size);
 		status = QDF_STATUS_SUCCESS;
 	} else {
 		status = qdf_file_read(ini_path, &fbuf);
@@ -151,8 +158,10 @@ static int __init wlan_copy_ini_buf(void)
 {
 	#include "wlan_cfg_ini.h"
 
-	wlan_cfg_buf = kmalloc(sizeof(wlan_cfg), GFP_KERNEL);
-	memcpy(wlan_cfg_buf, wlan_cfg, sizeof(wlan_cfg));
+	wlan_cfg_size = sizeof(wlan_cfg);
+	wlan_cfg_buf = kmalloc(wlan_cfg_size, GFP_KERNEL);
+	if (wlan_cfg_buf)
+		memcpy(wlan_cfg_buf, wlan_cfg, wlan_cfg_size);
 
 	return 0;
 }
