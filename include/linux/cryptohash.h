@@ -15,4 +15,10 @@
 void sha1_init(__u32 *buf);
 void sha1_transform(__u32 *digest, const char *data, __u32 *W);
 
+/* Compatibility aliases for legacy callers */
+#define SHA_DIGEST_WORDS SHA1_DIGEST_WORDS
+#define SHA_WORKSPACE_WORDS SHA1_WORKSPACE_WORDS
+#define sha_init sha1_init
+#define sha_transform sha1_transform
+
 #endif
